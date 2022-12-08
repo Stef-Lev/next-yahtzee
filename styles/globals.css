@@ -46,67 +46,21 @@ code {
 }
 
 .dice {
-  background-color: #fff;
+  width: 100px;
+  height: 100px;
+  transform-style: preserve-3d;
+  transition: transform 1s;
 }
 
 .dot {
-  display: block;
-  /* width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #303030; */
+  position: absolute;
 }
-
-.face-one {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.dice-container {
+  position: relative;
+  display: inline-block;
 }
-
-.face-two {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
-}
-
-.face-two .dot:nth-of-type(2) {
-  align-self: flex-end;
-}
-
-.face-three {
-  display: flex;
-  justify-content: space-between;
-}
-
-.face-three .dot:nth-of-type(1) {
-  align-self: flex-end;
-}
-
-.face-three .dot:nth-of-type(2) {
-  align-self: center;
-}
-
-.face-four,
-.face-six,
-.face-five {
-  display: flex;
-  justify-content: space-between;
-}
-
-.face-four .column,
-.face-six .column,
-.face-five .column {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.face-five .column:nth-of-type(2) {
-  justify-content: center;
-}
-
 @media screen and (max-width: 359px) {
-  .dice {
+  .side {
     height: 44px;
     width: 44px;
     border-radius: 8px;
@@ -118,10 +72,10 @@ code {
 }
 
 @media screen and (min-width: 360px) {
-  .dice-container {
+  .container {
     width: 350px;
   }
-  .dice {
+  .side {
     height: 55px;
     width: 55px;
     border-radius: 10px;
@@ -139,10 +93,10 @@ code {
 }
 
 @media screen and (min-width: 480px) {
-  .dice-container {
+  .container {
     width: 470px;
   }
-  .dice {
+  .side {
     height: 68px;
     width: 68px;
     border-radius: 10px;
@@ -159,11 +113,119 @@ code {
   }
 }
 
+.side {
+  position: absolute;
+  background-color: #fff;
+  border-radius: 5px;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #e5e5e5;
+  text-align: center;
+  line-height: 2em;
+}
+
+.side:nth-child(1) {
+  transform: translateZ(3.1em);
+}
+
+.side:nth-child(6) {
+  transform: rotateY(90deg) translateZ(3.1em);
+}
+
+.side:nth-child(3) {
+  transform: rotateY(-90deg) translateZ(3.1em);
+}
+
+.side:nth-child(4) {
+  transform: rotateX(90deg) translateZ(3.1em);
+}
+
+.side:nth-child(5) {
+  transform: rotateX(-90deg) translateZ(3.1em);
+}
+
+.side:nth-child(2) {
+  transform: rotateY(-180deg) translateZ(3.1em);
+}
+
+.show-1 {
+  transform: rotateX(720deg) rotateZ(-720deg);
+}
+
+.show-6 {
+  transform: rotateX(-900deg) rotateZ(1080deg);
+}
+
+.show-3 {
+  transform: rotateY(-450deg) rotateZ(-1440deg);
+}
+
+.show-4 {
+  transform: rotateY(810deg) rotateZ(720deg);
+}
+
+.show-5 {
+  transform: rotateX(-810deg) rotateZ(-1080deg);
+}
+
+.show-2 {
+  transform: rotateX(450deg) rotateZ(-720deg);
+}
+
+.two-1,
+.three-1,
+.four-1,
+.five-1,
+.six-1 {
+  top: 20%;
+  left: 20%;
+}
+
+.four-3,
+.five-3,
+.six-4 {
+  top: 20%;
+  left: 80%;
+}
+
+.one-1,
+.three-2,
+.five-5 {
+  top: 50%;
+  left: 50%;
+}
+
+.four-2,
+.five-2,
+.six-3 {
+  top: 80%;
+  left: 20%;
+}
+
+.two-2,
+.three-3,
+.four-4,
+.five-4,
+.six-6 {
+  top: 80%;
+  left: 80%;
+}
+
+.six-2 {
+  top: 50%;
+  left: 20%;
+}
+
+.six-5 {
+  top: 50%;
+  left: 80%;
+}
+
 @media screen and (min-width: 640px) {
-  .dice-container {
+  .container {
     width: 550px;
   }
-  .dice {
+  .side {
     height: 80px;
     width: 80px;
     border-radius: 10px;
@@ -181,10 +243,10 @@ code {
 }
 
 @media screen and (min-width: 768px) {
-  .dice-container {
+  .container {
     width: 620px;
   }
-  .dice {
+  .side {
     height: 84px;
     width: 84px;
     border-radius: 10px;
@@ -202,10 +264,10 @@ code {
 }
 
 @media screen and (min-width: 1024px) {
-  .dice-container {
+  .container {
     width: 700px;
   }
-  .dice {
+  .side {
     height: 100px;
     width: 100px;
     border-radius: 10px;
@@ -223,11 +285,11 @@ code {
 }
 
 @media screen and (min-width: 1280px) {
-  .dice-container {
+  .container {
     width: 750px;
   }
 
-  .dice {
+  .side {
     height: 105px;
     width: 105px;
     border-radius: 10px;
@@ -244,6 +306,28 @@ code {
   }
 }
 
+button {
+  position: relative;
+  top: 80px;
+  left: 10px;
+  padding: 15px 50px;
+  color: #fff;
+  background-color: #f4d35e;
+  border: none;
+  font-size: 20px;
+  border-radius: 20px;
+  box-shadow: 1px 3px #50514f;
+  outline: none;
+  transition: 0.3s;
+}
+
+button:hover,
+button:active {
+  outline: none;
+  background: #50514f;
+  cursor: pointer;
+  transform: translateY(15px);
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
