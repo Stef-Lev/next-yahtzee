@@ -14,7 +14,7 @@ function App() {
     for (let k = 1; k <= diceNames.length; k++) {
       let dice = document.getElementById(`dice${k}`);
       let diceRoll = Math.floor(Math.random() * 6 + 1);
-      console.log("diceRoll", diceRoll);
+      console.log(`dice: ${k} - roll: ${diceRoll}`);
       for (let i = 1; i <= 6; i++) {
         dice.classList.remove("show-" + i);
         if (diceRoll === i) {
