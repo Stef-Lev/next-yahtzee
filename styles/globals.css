@@ -6,6 +6,14 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 .App {
   text-align: center;
   height: 100vh;
@@ -58,8 +66,6 @@ code {
 
 .side {
   position: absolute;
-  background-color: #fff;
-  border-radius: 10px;
   width: 120px;
   height: 120px;
 }
@@ -132,7 +138,6 @@ code {
   border-radius: 10px;
 }
 .outline.selected {
-  /* border: 10px solid greenyellow; */
   outline: 10px solid red;
   background-color: red;
 }

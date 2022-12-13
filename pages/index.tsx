@@ -1,5 +1,6 @@
 import React from "react";
 import Dice from "../components/Dice";
+import ScoreTable from "../components/ScoreTable";
 
 function App() {
   const diceNames = [
@@ -30,11 +31,10 @@ function App() {
         className="
       rounded-lg 
       w-full lg:w-5/6 xl:w-3/5
-      h-full md:h-[85%] 
+      h-full lg:h-[95%] 
       bg-basic-white"
       >
-        <div className="md:rounded-t-lg bg-gradient-to-r from-teal-blue to-teal-dark xs:p-[12px] md:p-[20px] lg:p-[50px]">
-          <h1>Yahtzee!</h1>
+        <div className="lg:rounded-t-lg bg-gradient-to-r from-teal-blue to-teal-dark xs:p-[12px] md:p-[20px] lg:p-[50px]">
           <div className="flex justify-center items-center my-10">
             <div className="container flex justify-between">
               {diceNames.map((dice) => (
@@ -45,16 +45,23 @@ function App() {
             </div>
           </div>
         </div>
-        <div id="roll" className="roll-button mt-5">
+        <div className="roll-button m-5 w-100% flex justify-between">
           <button
             onClick={rollDice}
-            className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded"
+            className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded w-[49%]"
           >
-            Roll dice!
+            Roll dice
+          </button>
+          <button
+            onClick={() => console.log("Played")}
+            className="bg-emerald-500 hover:bg-emerald-600 disabled:opacity-[0.3] disabled:bg-emerald-500 text-white font-bold py-2 px-4 rounded w-[49%]"
+          >
+            Play
           </button>
         </div>
-        <div className="p-[20px] h-[60%]"></div>
-        {/* <img src="/dice-sides/five.svg" /> */}
+        <div className="px-[20px]">
+          <ScoreTable />
+        </div>
       </div>
     </div>
   );
