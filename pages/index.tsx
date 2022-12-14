@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Die from "../components/Die";
+import { RollPoints } from "../types/types";
 import ScoreTable from "../components/ScoreTable";
 
 function App() {
@@ -10,8 +11,68 @@ function App() {
     { number: 4, string: "four", selected: false },
     { number: 5, string: "five", selected: false },
   ]);
+  const [rollsLeft, setRollsLeft] = useState<number>(3);
+  const [roll, setRoll] = useState<never[] | number[]>([]);
+  const [rollPoints, setRollPoints] = useState<RollPoints>({
+    ones: 0,
+    twos: 0,
+    threes: 0,
+    fours: 0,
+    fives: 0,
+    sixes: 0,
+    threeOAK: 0,
+    fourOAK: 0,
+    fullHouse: 0,
+    smallS: 0,
+    largeS: 0,
+    chance: 0,
+    yahtzee: 0,
+  });
 
-  const [rollsLeft, setRollsLeft] = useState(3);
+  useEffect(() => {
+    if (roll.length) {
+      console.log(roll);
+      calculatePoints(rollPoints, roll);
+      console.log(rollPoints);
+    }
+  }, [dice, roll, rollPoints]);
+
+  function calculatePoints(rollPoints, roll) {
+    // TODO: The logic needs to be improved, it's not working
+    const sortedRoll = roll.sort();
+    const joinedRoll = sortedRoll.join("");
+    if (sortedRoll.every((item, index, arr) => item === arr[0])) {
+      setRollPoints({ ...rollPoints, yahtzee: 50 });
+      const totalSum = sortedRoll.reduce((acc, cur) => acc + cur);
+      switch (sortedRoll[0]) {
+        case 1:
+          setRollPoints({ ...rollPoints, ones: totalSum });
+        case 2:
+          setRollPoints({ ...rollPoints, twos: totalSum });
+        case 3:
+          setRollPoints({ ...rollPoints, threes: totalSum });
+        case 4:
+          setRollPoints({ ...rollPoints, fours: totalSum });
+        case 5:
+          setRollPoints({ ...rollPoints, fives: totalSum });
+        case 6:
+          setRollPoints({ ...rollPoints, sixes: totalSum });
+        default:
+          console.error("Wrong dice value");
+      }
+      setRollPoints({ ...rollPoints, chance: totalSum });
+      setRollPoints({ ...rollPoints, threeOAK: 30 });
+      setRollPoints({ ...rollPoints, fourOAK: 40 });
+    }
+    if (/(.)\1{3}/.test(joinedRoll)) {
+      setRollPoints({ ...rollPoints, fourOAK: 40 });
+      setRollPoints({ ...rollPoints, threeOAK: 30 });
+    } else if (/(.)\1{2}(.)\2|(.)\3(.)\4{2}/.test(joinedRoll)) {
+      setRollPoints({ ...rollPoints, fullHouse: 25 });
+    } else if (/(.)\1{2}/.test(joinedRoll)) {
+      setRollPoints({ ...rollPoints, threeOAK: 30 });
+    }
+  }
 
   function toggleSelected(number: number) {
     if (rollsLeft) {
@@ -25,13 +86,17 @@ function App() {
     }
   }
 
+  // TODO: Need to hide dice before first roll, not show 5 ones
+
   function rollDice() {
     if (rollsLeft) {
+      let rollArr = [];
+      // FIXME: Maybe we need to use the roll from the state
       for (let k = 1; k <= dice.length; k++) {
         if (!dice[k - 1].selected) {
           let die = document.getElementById(`dice${k}`);
           let diceRoll = Math.floor(Math.random() * 5 + 1);
-          console.log(`dice: ${k} - roll: ${diceRoll}`);
+          rollArr.push(diceRoll);
           for (let i = 1; i <= 5; i++) {
             die?.classList.remove("show-" + i);
             if (diceRoll === i) {
@@ -40,6 +105,7 @@ function App() {
           }
         }
       }
+      setRoll((prevRoll) => rollArr);
       setRollsLeft((prevRolls) => prevRolls - 1);
     }
   }
@@ -57,14 +123,13 @@ function App() {
           <div className="flex justify-center items-center my-10">
             <div className="container flex justify-between">
               {dice.map((die) => (
-                <div key={die.number} className="dice-container">
-                  <Die
-                    nameN={die.number}
-                    nameS={die.string}
-                    selected={die.selected}
-                    onClick={toggleSelected}
-                  />
-                </div>
+                <Die
+                  key={die.number}
+                  nameN={die.number}
+                  nameS={die.string}
+                  selected={die.selected}
+                  onClick={toggleSelected}
+                />
               ))}
             </div>
           </div>
@@ -72,7 +137,7 @@ function App() {
         <div className="roll-button m-5 w-100% flex justify-between">
           <button
             onClick={rollDice}
-            className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded w-[49%] disabled:opacity-[0.3]"
+            className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded w-[49%] disabled:opacity-[0.3] disabled:bg-orange-400"
             disabled={!rollsLeft}
           >
             <span className="flex justify-between">
@@ -90,7 +155,7 @@ function App() {
           </button>
         </div>
         <div className="px-[20px]">
-          <ScoreTable />
+          <ScoreTable rollPoints={rollPoints} />
         </div>
       </div>
     </div>
