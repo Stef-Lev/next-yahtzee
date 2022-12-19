@@ -3,37 +3,41 @@ import Die from "../components/Die";
 import { RollPoints } from "../types/types";
 import ScoreTable from "../components/ScoreTable";
 
+const rollPointsDefault = {
+  ones: 0,
+  twos: 0,
+  threes: 0,
+  fours: 0,
+  fives: 0,
+  sixes: 0,
+  threeOAK: 0,
+  fourOAK: 0,
+  fullHouse: 0,
+  smallS: 0,
+  largeS: 0,
+  chance: 0,
+  yahtzee: 0,
+};
+
+const diceDefault = [
+  { number: 1, string: "one", selected: false },
+  { number: 2, string: "two", selected: false },
+  { number: 3, string: "three", selected: false },
+  { number: 4, string: "four", selected: false },
+  { number: 5, string: "five", selected: false },
+];
+
 function App() {
-  const [dice, setDice] = useState([
-    { number: 1, string: "one", selected: false },
-    { number: 2, string: "two", selected: false },
-    { number: 3, string: "three", selected: false },
-    { number: 4, string: "four", selected: false },
-    { number: 5, string: "five", selected: false },
-  ]);
+  const [dice, setDice] = useState(diceDefault);
   const [rollsLeft, setRollsLeft] = useState<number>(3);
   const [roll, setRoll] = useState<never[] | number[]>([]);
-  const [rollPoints, setRollPoints] = useState<RollPoints>({
-    ones: 0,
-    twos: 0,
-    threes: 0,
-    fours: 0,
-    fives: 0,
-    sixes: 0,
-    threeOAK: 0,
-    fourOAK: 0,
-    fullHouse: 0,
-    smallS: 0,
-    largeS: 0,
-    chance: 0,
-    yahtzee: 0,
-  });
+  const [rollPoints, setRollPoints] = useState<RollPoints>(rollPointsDefault);
 
   useEffect(() => {
     if (roll.length) {
-      console.log(roll);
+      console.log("roll", roll);
       calculatePoints(rollPoints, roll);
-      console.log(rollPoints);
+      console.log("rollPoints", rollPoints);
     }
   }, [dice, roll, rollPoints]);
 
@@ -86,8 +90,6 @@ function App() {
     }
   }
 
-  // TODO: Need to hide dice before first roll, not show 5 ones
-
   function rollDice() {
     if (rollsLeft) {
       let rollArr = [];
@@ -95,9 +97,9 @@ function App() {
       for (let k = 1; k <= dice.length; k++) {
         if (!dice[k - 1].selected) {
           let die = document.getElementById(`dice${k}`);
-          let diceRoll = Math.floor(Math.random() * 5 + 1);
+          let diceRoll = Math.floor(Math.random() * 6 + 1);
           rollArr.push(diceRoll);
-          for (let i = 1; i <= 5; i++) {
+          for (let i = 1; i <= 6; i++) {
             die?.classList.remove("show-" + i);
             if (diceRoll === i) {
               die?.classList.add("show-" + i);
@@ -108,6 +110,13 @@ function App() {
       setRoll((prevRoll) => rollArr);
       setRollsLeft((prevRolls) => prevRolls - 1);
     }
+  }
+
+  function resetGame() {
+    setDice(diceDefault);
+    setRollsLeft(3);
+    setRoll([]);
+    setRollPoints(rollPointsDefault);
   }
 
   return (
@@ -121,7 +130,11 @@ function App() {
       >
         <div className="lg:rounded-t-lg bg-gradient-to-r from-teal-blue to-teal-dark xs:p-[12px] md:p-[20px] lg:p-[50px]">
           <div className="flex justify-center items-center my-10">
-            <div className="container flex justify-between">
+            <div
+              className={`opacity-${
+                rollsLeft - 3
+              } container flex justify-between`}
+            >
               {dice.map((die) => (
                 <Die
                   key={die.number}
@@ -157,6 +170,12 @@ function App() {
         <div className="px-[20px]">
           <ScoreTable rollPoints={rollPoints} />
         </div>
+        <button
+          onClick={resetGame}
+          className="bg-red-500 hover:bg-red-600 disabled:opacity-[0.4] text-white font-bold py-2 px-4 rounded w-[49%]"
+        >
+          Start all over!
+        </button>
       </div>
     </div>
   );
