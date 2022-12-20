@@ -47,36 +47,18 @@ function App() {
     // TODO: The logic needs to be improved, it's not working
     const sortedRoll = roll.sort();
     const joinedRoll = sortedRoll.join("");
-    if (sortedRoll.every((item, index, arr) => item === arr[0])) {
-      setRollPoints({ ...rollPoints, yahtzee: 50 });
-      const totalSum = sortedRoll.reduce((acc, cur) => acc + cur);
-      switch (sortedRoll[0]) {
-        case 1:
-          setRollPoints({ ...rollPoints, ones: totalSum });
-        case 2:
-          setRollPoints({ ...rollPoints, twos: totalSum });
-        case 3:
-          setRollPoints({ ...rollPoints, threes: totalSum });
-        case 4:
-          setRollPoints({ ...rollPoints, fours: totalSum });
-        case 5:
-          setRollPoints({ ...rollPoints, fives: totalSum });
-        case 6:
-          setRollPoints({ ...rollPoints, sixes: totalSum });
-        default:
-          console.error("Wrong dice value");
-      }
-      setRollPoints({ ...rollPoints, chance: totalSum });
-      setRollPoints({ ...rollPoints, threeOAK: 30 });
-      setRollPoints({ ...rollPoints, fourOAK: 40 });
-    }
-    if (/(.)\1{3}/.test(joinedRoll)) {
-      setRollPoints({ ...rollPoints, fourOAK: 40 });
-      setRollPoints({ ...rollPoints, threeOAK: 30 });
+    if (/(.)\1{4}/.test(joinedRoll)) {
+      console.log("Five of a Kind");
+    } else if (/(.)\1{3}/.test(joinedRoll)) {
+      console.log("Four of a Kind");
     } else if (/(.)\1{2}(.)\2|(.)\3(.)\4{2}/.test(joinedRoll)) {
-      setRollPoints({ ...rollPoints, fullHouse: 25 });
+      console.log("Full House");
     } else if (/(.)\1{2}/.test(joinedRoll)) {
-      setRollPoints({ ...rollPoints, threeOAK: 30 });
+      console.log("Three of a Kind");
+    } else if (/1234|2345|3456/.test(joinedRoll.replace(/(.)\1/, "$1"))) {
+      console.log("Small Straight");
+    } else if (/12345|23456/.test(joinedRoll.replace(/(.)\1/, "$1"))) {
+      console.log("Large Straight");
     }
   }
 
@@ -117,7 +99,7 @@ function App() {
           }
         }
       }
-      setRoll((prevRoll) => rollArr);
+      setRoll(rollArr);
       setRollsLeft((prevRolls) => prevRolls - 1);
     }
   }
@@ -128,6 +110,8 @@ function App() {
     setRoll([]);
     setRollPoints(rollPointsDefault);
   }
+
+  console.log("roll", roll);
 
   return (
     <div className="App flex flex-col justify-center items-center">
