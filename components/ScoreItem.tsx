@@ -7,17 +7,17 @@ const ScoreItem = ({ title, value, isSpecial }: ScoreItemType) => {
         isSpecial
           ? "bg-gradient-to-r from-teal-dark to-teal-blue"
           : "bg-zinc-200"
-      }  h-[50px] mb-[10px] px-[10px]`}
+      }  h-[45px] mb-[8px] px-[8px]`}
     >
       <div
-        className={`text-[20px] ${
+        className={`text-[18px] ${
           isSpecial ? "text-gray-100" : "text-gray-700"
         }`}
       >
         {title}
       </div>
       <div
-        className={`rounded bg-slate-50 h-[36px] w-[50px] text-gray-500 text-[24px] font-bold flex justify-center items-center hover:cursor-pointer`}
+        className={`rounded bg-slate-50 h-[30px] w-[42px] text-gray-500 text-[20px] font-bold flex justify-center items-center hover:cursor-pointer`}
       >
         {value}
       </div>
