@@ -27,9 +27,11 @@ const diceDefault = [
   { number: 5, string: "five", selected: false },
 ];
 
+const maxRolls = 3;
+
 function App() {
   const [dice, setDice] = useState(diceDefault);
-  const [rollsLeft, setRollsLeft] = useState<number>(3);
+  const [rollsLeft, setRollsLeft] = useState<number>(maxRolls);
   const [roll, setRoll] = useState<never[] | number[]>([]);
   const [rollPoints, setRollPoints] = useState<RollPoints>(rollPointsDefault);
 
@@ -101,6 +103,14 @@ function App() {
           rollArr.push(diceRoll);
           for (let i = 1; i <= 6; i++) {
             die?.classList.remove("show-" + i);
+            // Trying to animate same roll
+            // if (i !== 6) {
+            //   die?.classList.add("show-" + (i + 1));
+            //   die?.classList.remove("show-" + (i + 1));
+            // } else {
+            //   die?.classList.add("show-" + (i - 1));
+            //   die?.classList.remove("show-" + (i - 1));
+            // }
             if (diceRoll === i) {
               die?.classList.add("show-" + i);
             }
@@ -114,7 +124,7 @@ function App() {
 
   function resetGame() {
     setDice(diceDefault);
-    setRollsLeft(3);
+    setRollsLeft(maxRolls);
     setRoll([]);
     setRollPoints(rollPointsDefault);
   }
