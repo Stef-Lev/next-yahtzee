@@ -4,12 +4,12 @@ export type ScoreItemType = {
   isSpecial?: boolean;
 };
 export type RollPoints = {
-  ones: number;
-  twos: number;
-  threes: number;
-  fours: number;
-  fives: number;
-  sixes: number;
+  one: number;
+  two: number;
+  three: number;
+  four: number;
+  five: number;
+  six: number;
   threeOAK: number;
   fourOAK: number;
   fullHouse: number;

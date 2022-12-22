@@ -9,12 +9,12 @@ const ScoreTable = ({ rollPoints }: ScoreTableProps) => {
   return (
     <div className="flex flex-row justify-between">
       <div className="flex flex-col w-[49%]">
-        <ScoreItem title="One" value={rollPoints.ones} />
-        <ScoreItem title="Two" value={rollPoints.twos} />
-        <ScoreItem title="Three" value={rollPoints.threes} />
-        <ScoreItem title="Four" value={rollPoints.fours} />
-        <ScoreItem title="Five" value={rollPoints.fives} />
-        <ScoreItem title="Six" value={rollPoints.sixes} />
+        <ScoreItem title="One" value={rollPoints.one} />
+        <ScoreItem title="Two" value={rollPoints.two} />
+        <ScoreItem title="Three" value={rollPoints.three} />
+        <ScoreItem title="Four" value={rollPoints.four} />
+        <ScoreItem title="Five" value={rollPoints.five} />
+        <ScoreItem title="Six" value={rollPoints.six} />
         <ScoreItem title="Total" value={75} isSpecial />
         <ScoreItem title="Bonus" value={35} isSpecial />
       </div>

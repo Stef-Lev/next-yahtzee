@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import Die from "../components/Die";
 import { RollPoints } from "../types/types";
 import ScoreTable from "../components/ScoreTable";
+import { sumDice, groupDice } from "../utils/countDice";
+import { numToString } from "../utils/numsToStrings";
 
 const rollPointsDefault = {
-  ones: 0,
-  twos: 0,
-  threes: 0,
-  fours: 0,
-  fives: 0,
-  sixes: 0,
+  one: 0,
+  two: 0,
+  three: 0,
+  four: 0,
+  five: 0,
+  six: 0,
   threeOAK: 0,
   fourOAK: 0,
   fullHouse: 0,
@@ -37,28 +39,65 @@ function App() {
 
   useEffect(() => {
     if (roll.length) {
-      console.log("roll", roll);
-      calculatePoints(rollPoints, roll);
-      console.log("rollPoints", rollPoints);
+      calculatePoints(roll);
     }
-  }, [dice, roll, rollPoints]);
+  }, [roll]);
 
-  function calculatePoints(rollPoints, roll) {
-    // TODO: The logic needs to be improved, it's not working
+  function calculatePoints(roll: number[]) {
+    setRollPoints(rollPointsDefault);
     const sortedRoll = roll.sort();
     const joinedRoll = sortedRoll.join("");
+    const groupedDice = groupDice(sortedRoll);
+
+    Object.entries(groupedDice).forEach((item) => {
+      setRollPoints((prevPoints) => ({
+        ...prevPoints,
+        [numToString[item[0]]]: item[0] * item[1],
+      }));
+    });
+
     if (/(.)\1{4}/.test(joinedRoll)) {
       console.log("Five of a Kind");
-    } else if (/(.)\1{3}/.test(joinedRoll)) {
+      setRollPoints((prevPoints) => ({
+        ...prevPoints,
+        [numToString[sortedRoll[0]]]: sumDice(sortedRoll),
+        yahtzee: 50,
+      }));
+    }
+    if (/(.)\1{3}/.test(joinedRoll)) {
       console.log("Four of a Kind");
-    } else if (/(.)\1{2}(.)\2|(.)\3(.)\4{2}/.test(joinedRoll)) {
+      setRollPoints((prevPoints) => ({
+        ...prevPoints,
+        fourOAK: sumDice(sortedRoll),
+      }));
+    }
+    if (/(.)\1{2}(.)\2|(.)\3(.)\4{2}/.test(joinedRoll)) {
       console.log("Full House");
-    } else if (/(.)\1{2}/.test(joinedRoll)) {
+      setRollPoints((prevPoints) => ({
+        ...prevPoints,
+        fullHouse: 25,
+      }));
+    }
+    if (/(.)\1{2}/.test(joinedRoll)) {
       console.log("Three of a Kind");
-    } else if (/1234|2345|3456/.test(joinedRoll.replace(/(.)\1/, "$1"))) {
+      setRollPoints((prevPoints) => ({
+        ...prevPoints,
+        threeOAK: sumDice(sortedRoll),
+      }));
+    }
+    if (/1234|2345|3456/.test(joinedRoll.replace(/(.)\1/, "$1"))) {
       console.log("Small Straight");
-    } else if (/12345|23456/.test(joinedRoll.replace(/(.)\1/, "$1"))) {
+      setRollPoints((prevPoints) => ({
+        ...prevPoints,
+        smallS: 30,
+      }));
+    }
+    if (/12345|23456/.test(joinedRoll.replace(/(.)\1/, "$1"))) {
       console.log("Large Straight");
+      setRollPoints((prevPoints) => ({
+        ...prevPoints,
+        largeS: 40,
+      }));
     }
   }
 
@@ -85,14 +124,6 @@ function App() {
           rollArr.push(diceRoll);
           for (let i = 1; i <= 6; i++) {
             die?.classList.remove("show-" + i);
-            // Trying to animate same roll
-            // if (i !== 6) {
-            //   die?.classList.add("show-" + (i + 1));
-            //   die?.classList.remove("show-" + (i + 1));
-            // } else {
-            //   die?.classList.add("show-" + (i - 1));
-            //   die?.classList.remove("show-" + (i - 1));
-            // }
             if (diceRoll === i) {
               die?.classList.add("show-" + i);
             }
@@ -110,8 +141,6 @@ function App() {
     setRoll([]);
     setRollPoints(rollPointsDefault);
   }
-
-  console.log("roll", roll);
 
   return (
     <div className="App flex flex-col justify-center items-center">
