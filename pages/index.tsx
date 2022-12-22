@@ -4,6 +4,7 @@ import { RollPoints } from "../types/types";
 import ScoreTable from "../components/ScoreTable";
 import { sumDice, groupDice } from "../utils/countDice";
 import { numToString } from "../utils/numsToStrings";
+import { DiceGroupObj } from "../types/types";
 
 const rollPointsDefault = {
   one: 0,

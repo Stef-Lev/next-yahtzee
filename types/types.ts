@@ -18,3 +18,7 @@ export type RollPoints = {
   chance: number;
   yahtzee: number;
 };
+
+export type DiceGroupObj = {
+  [key: number]: number;
+};
