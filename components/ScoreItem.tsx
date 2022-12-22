@@ -17,7 +17,9 @@ const ScoreItem = ({ title, value, isSpecial }: ScoreItemType) => {
         {title}
       </div>
       <div
-        className={`rounded bg-slate-50 h-[30px] w-[42px] text-gray-500 text-[20px] font-bold flex justify-center items-center hover:cursor-pointer`}
+        className={`rounded bg-slate-50 h-[30px] w-[42px] text-gray-500 text-[20px] font-bold flex justify-center items-center hover:cursor-pointer ${
+          value > 0 ? "animate-[flash_1s_ease-in-out]" : ""
+        }`}
       >
         {value}
       </div>

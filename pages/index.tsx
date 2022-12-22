@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Die from "../components/Die";
 import { RollPoints } from "../types/types";
 import ScoreTable from "../components/ScoreTable";
 import { sumDice, groupDice } from "../utils/countDice";
 import { numToString } from "../utils/numsToStrings";
-import { DiceGroupObj } from "../types/types";
+import { Dice } from "../types/types";
 
 const rollPointsDefault = {
   one: 0,
@@ -18,34 +18,31 @@ const rollPointsDefault = {
   fullHouse: 0,
   smallS: 0,
   largeS: 0,
-  chance: 0,
   yahtzee: 0,
+  chance: 0,
 };
 
 const diceDefault = [
-  { number: 1, string: "one", selected: false },
-  { number: 2, string: "two", selected: false },
-  { number: 3, string: "three", selected: false },
-  { number: 4, string: "four", selected: false },
-  { number: 5, string: "five", selected: false },
+  { number: 1, string: "one", roll: "", selected: false },
+  { number: 2, string: "two", roll: "", selected: false },
+  { number: 3, string: "three", roll: "", selected: false },
+  { number: 4, string: "four", roll: "", selected: false },
+  { number: 5, string: "five", roll: "", selected: false },
 ];
 
-const maxRolls = 3;
+const maxRolls = 10;
 
 function App() {
-  const [dice, setDice] = useState(diceDefault);
+  const [dice, setDice] = useState<Dice>(diceDefault);
   const [rollsLeft, setRollsLeft] = useState<number>(maxRolls);
-  const [roll, setRoll] = useState<never[] | number[]>([]);
   const [rollPoints, setRollPoints] = useState<RollPoints>(rollPointsDefault);
 
-  useEffect(() => {
-    if (roll.length) {
-      calculatePoints(roll);
-    }
-  }, [roll]);
+  function setRoll(dice: Dice) {
+    return dice.map((die) => die.roll);
+  }
 
-  function calculatePoints(roll: number[]) {
-    setRollPoints(rollPointsDefault);
+  const calculatePoints = (dice: Dice) => {
+    const roll = setRoll(dice);
     const sortedRoll = roll.sort();
     const joinedRoll = sortedRoll.join("");
     const groupedDice = groupDice(sortedRoll);
@@ -53,9 +50,14 @@ function App() {
     Object.entries(groupedDice).forEach((item) => {
       setRollPoints((prevPoints) => ({
         ...prevPoints,
-        [numToString[item[0]]]: item[0] * item[1],
+        [numToString[item[0]]]: Number(item[0]) * item[1],
       }));
     });
+
+    setRollPoints((prevPoints) => ({
+      ...prevPoints,
+      chance: sumDice(sortedRoll),
+    }));
 
     if (/(.)\1{4}/.test(joinedRoll)) {
       console.log("Five of a Kind");
@@ -66,41 +68,43 @@ function App() {
       }));
     }
     if (/(.)\1{3}/.test(joinedRoll)) {
-      console.log("Four of a Kind");
       setRollPoints((prevPoints) => ({
         ...prevPoints,
         fourOAK: sumDice(sortedRoll),
       }));
     }
-    if (/(.)\1{2}(.)\2|(.)\3(.)\4{2}/.test(joinedRoll)) {
-      console.log("Full House");
+    if (
+      /(.)\1{2}(.)\2|(.)\3(.)\4{2}/.test(joinedRoll) &&
+      !/(.)\1{4}/.test(joinedRoll)
+    ) {
       setRollPoints((prevPoints) => ({
         ...prevPoints,
         fullHouse: 25,
       }));
     }
     if (/(.)\1{2}/.test(joinedRoll)) {
-      console.log("Three of a Kind");
       setRollPoints((prevPoints) => ({
         ...prevPoints,
         threeOAK: sumDice(sortedRoll),
       }));
     }
     if (/1234|2345|3456/.test(joinedRoll.replace(/(.)\1/, "$1"))) {
-      console.log("Small Straight");
       setRollPoints((prevPoints) => ({
         ...prevPoints,
         smallS: 30,
       }));
     }
     if (/12345|23456/.test(joinedRoll.replace(/(.)\1/, "$1"))) {
-      console.log("Large Straight");
       setRollPoints((prevPoints) => ({
         ...prevPoints,
         largeS: 40,
       }));
     }
-  }
+  };
+
+  useEffect(() => {
+    calculatePoints(dice);
+  }, [dice]);
 
   function toggleSelected(number: number) {
     if (rollsLeft) {
@@ -116,13 +120,32 @@ function App() {
 
   function rollDice() {
     if (rollsLeft) {
-      let rollArr = [];
-      // FIXME: Maybe we need to use the roll from the state
+      setRollPoints(rollPointsDefault);
       for (let k = 1; k <= dice.length; k++) {
+        // Roll the dice that were not selected
         if (!dice[k - 1].selected) {
           let die = document.getElementById(`dice${k}`);
+
+          // Get a random dice roll
           let diceRoll = Math.floor(Math.random() * 6 + 1);
-          rollArr.push(diceRoll);
+
+          // Find the played die and update its rolled number
+          const playedDie = dice.find(
+            (item) => item.number === dice[k - 1].number
+          );
+          playedDie.roll = diceRoll;
+
+          // Filter out the dice that were not rolled
+          const filteredDice = dice.filter(
+            (item) => item.number !== dice[k - 1].number
+          );
+          // Construct and update the dice state
+          const newDice = [playedDie, ...filteredDice].sort(
+            (a, b) => a?.number - b?.number
+          );
+          setDice(newDice);
+
+          // Animate the dice and show the side rolled
           for (let i = 1; i <= 6; i++) {
             die?.classList.remove("show-" + i);
             if (diceRoll === i) {
@@ -131,17 +154,18 @@ function App() {
           }
         }
       }
-      setRoll(rollArr);
+      // Update the remaining rolls to the state
       setRollsLeft((prevRolls) => prevRolls - 1);
     }
   }
 
   function resetGame() {
-    setDice(diceDefault);
-    setRollsLeft(maxRolls);
-    setRoll([]);
     setRollPoints(rollPointsDefault);
+    setRollsLeft(maxRolls);
+    setDice(diceDefault);
   }
+
+  console.log(rollPoints, rollPointsDefault);
 
   return (
     <div className="App flex flex-col justify-center items-center">

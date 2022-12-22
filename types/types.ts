@@ -15,10 +15,19 @@ export type RollPoints = {
   fullHouse: number;
   smallS: number;
   largeS: number;
-  chance: number;
   yahtzee: number;
+  chance: number;
 };
 
 export type DiceGroupObj = {
   [key: number]: number;
 };
+
+export type Die = {
+  number: number;
+  string: string;
+  roll: number | string;
+  selected: boolean;
+};
+
+export type Dice = Die[];

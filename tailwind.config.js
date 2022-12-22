@@ -14,6 +14,15 @@ module.exports = {
         "light-blue": "#BDE4EF",
         "rubine-red": "#CA2E55",
       },
+      keyframes: {
+        flash: {
+          "0%, 100%": { background: "#FFEAB0" },
+          "50%": { background: "#E4E4E7" },
+        },
+      },
+      animation: {
+        flash: "flash 1s ease-in-out",
+      },
     },
     screens: {
       xs: "360px",

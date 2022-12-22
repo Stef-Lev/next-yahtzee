@@ -1,4 +1,12 @@
-export const numToString = {
+type NumToString = {
+  [key: number]: string;
+};
+
+type StringToNum = {
+  [key: string]: number;
+};
+
+export const numToString: NumToString = {
   1: "one",
   2: "two",
   3: "three",
@@ -7,7 +15,7 @@ export const numToString = {
   6: "six",
 };
 
-export const stringToNum = {
+export const stringToNum: StringToNum = {
   one: 1,
   two: 2,
   three: 3,
