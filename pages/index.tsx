@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
+import io from "socket.io-client";
 import Die from "../components/Die";
 import { RollPoints } from "../types/types";
 import ScoreTable from "../components/ScoreTable";
 import { sumDice, groupDice } from "../utils/countDice";
 import { numToString } from "../utils/numsToStrings";
 import { Dice } from "../types/types";
+let socket;
 
 const rollPointsDefault = {
   one: 0,
@@ -36,6 +38,23 @@ function App() {
   const [dice, setDice] = useState<Dice>(diceDefault);
   const [rollsLeft, setRollsLeft] = useState<number>(maxRolls);
   const [rollPoints, setRollPoints] = useState<RollPoints>(rollPointsDefault);
+
+  useEffect(() => {
+    socketInitializer();
+  }, []);
+
+  const socketInitializer = async () => {
+    await fetch("/api/socket");
+    socket = io();
+
+    socket.on("connect", () => {
+      console.log("connected");
+    });
+
+    socket.on("sendRoll", (msg) => {
+      console.log(msg);
+    });
+  };
 
   function setRoll(dice: Dice) {
     return dice.map((die) => die.roll);
@@ -144,6 +163,7 @@ function App() {
             (a, b) => a?.number - b?.number
           );
           setDice(newDice);
+          socket.emit("receiveRoll", newDice);
 
           // Animate the dice and show the side rolled
           for (let i = 1; i <= 6; i++) {
@@ -164,6 +184,8 @@ function App() {
     setRollsLeft(maxRolls);
     setDice(diceDefault);
   }
+
+  console.log(dice);
 
   console.log(rollPoints, rollPointsDefault);
 
